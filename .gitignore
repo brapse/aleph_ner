@@ -3,3 +3,4 @@ data/*
 vendor/*
 notebooks/.ipynb_checkpoints/*
 *.pyc
+*.egg-info
