@@ -6,17 +6,6 @@ from nltk.tree import Tree
 from nltk.tokenize import RegexpTokenizer
 from collections import defaultdict
 
-# TODO: The class API is stupid, just ue functions and compose them
-# TODO: Thread a document structure through the whole process
-# New output format
-# document
-"""
-    {
-     "document_id": 1234,
-     "entities": [["ORGANIZATION", "US. Department Of Immigration"]]
-    }
-"""
-
 def AlephDumpReader(path):
     with open(path, 'rU') as f:
         for line in f:
@@ -38,10 +27,15 @@ def Annotator(reader):
 
 def Reporter(reader):
     for doc in reader:
-        formatted = defaultdict(list)
+        entities = []
         for ent in doc['entities']:
             if isinstance(ent, Tree):
                 entLabel = str.join(" ", [x for x,y in ent.flatten()])
-                formatted[ent.label()].append(entLabel)
-        doc['cleaned_entities'] = dict(formatted)
+                entities.append((ent.label(), entLabel))
+
+        # XXX: Remove unused keys, this is pretty smelly
+        for unwanted_key in set(doc.keys()) - set(['document_id']):
+            del doc[unwanted_key]
+
+        doc['entities'] = entities
         yield doc
