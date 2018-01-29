@@ -2,12 +2,11 @@ import click
 import pprint
 from aleph_ner.pipeline import AlephDumpReader, Tokenizer, Annotator, Reporter
 
-# TODO: Provide a subcommands: annotate, test, train, etc
 @click.command()
-@click.argument('path', type=click.Path(exists=True))
-def annotate(path):
+@click.argument('paths', type=click.Path(exists=True), nargs=-1)
+def annotate(paths):
     """Annotate an Aleph dump with named entity recognition"""
-    pipeline = Reporter(Annotator(Tokenizer(AlephDumpReader(path))))
+    pipeline = Reporter(Annotator(Tokenizer(AlephDumpReader(paths))))
 
     for doc in pipeline:
         pprint.pprint(doc)
